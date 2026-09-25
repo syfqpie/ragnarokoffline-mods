@@ -1,0 +1,3 @@
+# ragnarokoffline-mods
+
+for fun.
