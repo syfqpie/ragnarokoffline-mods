@@ -1,0 +1,9 @@
+{
+  "name": "atcommands",
+  "version": "0.0.1",
+  "author": "syfqpie",
+  "description": "For fun.",
+  "default": "off",
+  "requires": { "app": ">=1.2.6", "era": "any" },
+  "settings": []
+}
