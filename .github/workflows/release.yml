@@ -1,47 +1,31 @@
-name: Release Mods
+name: Attach Mod Zips to Release
 
 on:
-  push:
-    tags:
-      - "v*"
+  release:
+    types: [published]
 
 permissions:
   contents: write
 
 jobs:
-  release:
+  build-and-upload:
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout
+      - name: Checkout repo
         uses: actions/checkout@v6
 
-      - name: Build mod archives
-        shell: bash
+      - name: Zip each mod directory
         run: |
-          set -euo pipefail
-
           mkdir -p dist
-
-          shopt -s nullglob
-
-          for mod in mods/*/; do
-            name="$(basename "$mod")"
-
-            echo "Building ${name}.zip"
-
-            (
-              cd mods
-              zip -r "../dist/${name}.zip" "$name"
-            )
+          for dir in mods/*/; do
+            mod_name=$(basename "$dir")
+            echo "Zipping $mod_name..."
+            (cd mods && zip -r "../dist/${mod_name}.zip" "$mod_name")
           done
+          ls -la dist
 
-      - name: Show release assets
-        run: ls -lh dist
-
-      - name: Create release
-        uses: softprops/action-gh-release@v3
-        with:
-          generate_release_notes: true
-          files: |
-            dist/*.zip
+      - name: Upload zips to the release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release upload "${{ github.event.release.tag_name }}" dist/*.zip --clobber
