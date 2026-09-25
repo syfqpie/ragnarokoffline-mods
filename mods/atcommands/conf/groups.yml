@@ -35,3 +35,4 @@ Body:
       charcommands: true
       reload: true
       whereis: true
+      item: true
